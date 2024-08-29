@@ -1,5 +1,10 @@
-#include "main.h"
+#ifndef __PROCESS__
+#define __PROCESS__
 
-void process(char *in, char **abs, char *cwd, char *PrevWD, bool *insideWorkingDirectory, bool *prevInsideWorkingDirectory, int logFile, bool *exitProgram, bgList *BGList, cmpList CMPList);
-bool foreGroundProcessFunction(char *tkn, char **abs, char *cwd, char *PrevWD, bool *insideWorkingDirectory, bool *prevInsideWorkingDirectory, int logFile, bool *exitProgram, bgList BGList, cmpList CMPList);
-bgList backGroundProcessFunction(char *tkn, bgList BGList, cmpList CMPList);
+#include "globalVariable.h"
+
+void process(char *in);
+bool foreGroundProcessFunction(char *tkn);
+bgList backGroundProcessFunction(char *tkn);
+
+#endif

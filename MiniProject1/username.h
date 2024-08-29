@@ -1,6 +1,11 @@
-#include "main.h"
+#ifndef __USERNAME__
+#define __USERNAME__ 
+
+#include "globalVariable.h"
 
 char *getSystemName();
 char *getHostName();
 char *currentWorkingDirectory();
-void displayRequirments(char *abs, char *cwd, bool insideWorkingDirectory);
+void displayRequirments();
+
+#endif

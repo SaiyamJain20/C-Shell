@@ -1,28 +1,6 @@
 #ifndef __MAIN__
 #define __MAIN__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>         //for strtok
-#include <assert.h>
-#include <errno.h>
-#include <stdbool.h>
-#include <time.h>
-
-#include <sys/utsname.h>    //for uname
-#include <unistd.h>         //for hostname, getpid, exec, fork, getopt, getcwd, sleep
-#include <sys/signal.h>     //for signal
-#include <sys/wait.h>       //for wait
-#include <signal.h>         //for kill
-#include <dirent.h>         //for readdir, opendir, closedir
-#include <sys/types.h>      //for opendir, closedir
-#include <sys/stat.h>       //for struct stat
-#include <fcntl.h>
-#include <termios.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <grp.h>
-
 typedef struct backGroundProcessList backGroundProcessList;
 typedef struct completedBackGroundProcessList completedBackGroundProcessList;
 typedef backGroundProcessList *bgList;
@@ -58,6 +36,20 @@ struct completedBackGroundProcessList {
     struct backGroundProcess *processDetails;
     struct completedBackGroundProcessList *next;
 };
+
+#include "globalVariable.h"
+
+
+extern char *abslutePath;
+extern char *cwd;
+extern char *PrevWD;
+extern bool prevInsideWorkingDirectory;
+extern bool insideWorkingDirectory;
+extern int logFile;
+extern bool exitProgram;
+extern bgList BGList;
+extern cmpList CMPList;
+
 
 #include "username.h"
 #include "tokenize.h"

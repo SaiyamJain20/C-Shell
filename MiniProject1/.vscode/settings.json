@@ -61,6 +61,8 @@
     "hop.h": "c",
     "tokenize.h": "c",
     "reveal.h": "c",
-    "log.h": "c"
+    "log.h": "c",
+    "pwd.h": "c",
+    "grp.h": "c"
   }
 }

@@ -1,4 +1,9 @@
-#include "main.h"
+#ifndef __HOP__
+#define __HOP__
 
-bool hop(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir, bool *prevWDInsideWorkingDir);
-bool cd(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir, bool *prevWDInsideWorkingDir);
+#include "globalVariable.h"
+
+bool hop(char *str);
+bool cd(char *str);
+
+#endif

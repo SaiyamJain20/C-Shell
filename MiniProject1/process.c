@@ -1,6 +1,6 @@
-#include "process.h"
+#include "main.h"
 
-void process(char *in, char **abs, char *cwd, char *PrevWD, bool *insideWorkingDirectory, bool *prevInsideWorkingDirectory, int logFile, bool *exitProgram, bgList *BGList, cmpList CMPList){
+void process(char *in) {
     int len = strlen(in);
     char *svPtr = in;
     char *tkn;
@@ -32,7 +32,7 @@ void process(char *in, char **abs, char *cwd, char *PrevWD, bool *insideWorkingD
                         do background on prev here
                     */
 
-                    *BGList = backGroundProcessFunction(prev, *BGList, CMPList);
+                    BGList = backGroundProcessFunction(prev);
 
                     // printf("%p\n", *BGList);
                 }
@@ -45,18 +45,18 @@ void process(char *in, char **abs, char *cwd, char *PrevWD, bool *insideWorkingD
             */
 
             if(lastBG == true)
-                *BGList = backGroundProcessFunction(prev, *BGList, CMPList);
+                BGList = backGroundProcessFunction(prev);
             else
-                foreGroundProcessFunction(prev, abs, cwd, PrevWD, insideWorkingDirectory, prevInsideWorkingDirectory, logFile, exitProgram, *BGList, CMPList);
+                foreGroundProcessFunction(prev);
         } else {
             /*
                 Do foreground on tkn here
             */
 
-            foreGroundProcessFunction(tkn, abs, cwd, PrevWD, insideWorkingDirectory, prevInsideWorkingDirectory, logFile, exitProgram, *BGList, CMPList);
+            foreGroundProcessFunction(tkn);
         }
 
-        if(*exitProgram == true) {
+        if(exitProgram == true) {
             break;
         }
     }
@@ -64,31 +64,31 @@ void process(char *in, char **abs, char *cwd, char *PrevWD, bool *insideWorkingD
     return;
 }
 
-bool foreGroundProcessFunction(char *tkn, char **abs, char *cwd, char *PrevWD, bool *insideWorkingDirectory, bool *prevInsideWorkingDirectory, int logFile, bool *exitProgram, bgList BGList, cmpList CMPList){
+bool foreGroundProcessFunction(char *tkn){
     char *saveptr;
     saveptr = malloc((strlen(tkn) + 1) * sizeof(char));
     strcpy(saveptr, tkn);
     char *firstCommand = strtok_r(NULL, " \t\n", &saveptr);
 
     if(strcmp(firstCommand, "exit") == 0){
-        *exitProgram = true;
+        exitProgram = true;
     } else if (strcmp(firstCommand, "hop") == 0) {
-        bool check = hop(tkn, abs, cwd, PrevWD, insideWorkingDirectory, prevInsideWorkingDirectory);
+        bool check = hop(tkn);
         if(check == false){
             return false;
         }
     } else if (strcmp(firstCommand, "cd") == 0) {
-        bool check = cd(tkn, abs, cwd, PrevWD, insideWorkingDirectory, prevInsideWorkingDirectory);
+        bool check = cd(tkn);
         if(check == false){
             return false;
         }
     } else if (strcmp(firstCommand, "reveal") == 0) {
-        bool check = reveal(tkn, cwd, PrevWD, *abs);
+        bool check = reveal(tkn);
         if(check == false){
             return false;
         }
     } else if (strcmp(firstCommand, "log") == 0) {
-        bool check = handleLog(tkn, logFile, *abs, cwd, PrevWD, insideWorkingDirectory, prevInsideWorkingDirectory, exitProgram, BGList, CMPList);
+        bool check = handleLog(tkn);
         if(check == false){
             return false;
         }
@@ -135,7 +135,7 @@ bool foreGroundProcessFunction(char *tkn, char **abs, char *cwd, char *PrevWD, b
     return true;
 }
 
-bgList backGroundProcessFunction(char *tkn, bgList BGList, cmpList CMPList) {
+bgList backGroundProcessFunction(char *tkn) {
     // backGroundProcess *process;
     // process = (backGroundProcess *)malloc(sizeof(backGroundProcess));
     // backGroundProcess **processPtr = &process;

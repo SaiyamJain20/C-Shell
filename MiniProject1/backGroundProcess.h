@@ -1,5 +1,10 @@
-#include "main.h"
+#ifndef __BACKGROUNDPROCESS__
+#define __BACKGROUNDPROCESS__
 
-bgList addNewProcessBgList(bgList list, backGroundProcess *process);
-cmpList revomeProcessBgList(bgList list, cmpList completeList, backGroundProcess *process);
-cmpList printProceesCmpList(cmpList compareList, bgList list);
+#include "globalVariable.h"
+
+bgList addNewProcessBgList(backGroundProcess *process);
+cmpList revomeProcessBgList(backGroundProcess *process);
+cmpList printProceesCmpList();
+
+#endif

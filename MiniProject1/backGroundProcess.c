@@ -1,19 +1,19 @@
-#include "backGroundProcess.h"
+#include "main.h"
 
-bgList addNewProcessBgList(bgList list, backGroundProcess *process) {
+bgList addNewProcessBgList(backGroundProcess *process) {
     bgList newList;
     newList = (bgList)malloc(sizeof(backGroundProcessList));
     newList->processDetails = process;
-    newList->next = list;
+    newList->next = BGList;
     newList->prev = NULL;
-    if(list != NULL) {
-        list->prev = newList;
+    if(BGList != NULL) {
+        BGList->prev = newList;
     }
     process->ptr = newList;
     return newList;
 }  
 
-cmpList revomeProcessBgList(bgList list, cmpList completeList, backGroundProcess *process) {
+cmpList revomeProcessBgList(backGroundProcess *process) {
     bgList temp = process->ptr;
     bgList prev = temp->prev;
     bgList next = temp->next;
@@ -21,19 +21,19 @@ cmpList revomeProcessBgList(bgList list, cmpList completeList, backGroundProcess
         prev->next = next;
     if(next != NULL)
         next->prev = prev;
-    if (prev == NULL) 
-        list = next;
+    if (BGList == NULL) 
+        BGList = next;
     
-    // cmpList newList;
-    // newList = (cmpList)malloc(sizeof(completedBackGroundProcessList));
-    // newList->processDetails = process;
-    // newList->next = completeList;
-    // return newList;
+    cmpList newList;
+    newList = (cmpList)malloc(sizeof(completedBackGroundProcessList));
+    newList->processDetails = process;
+    newList->next = CMPList;
+    return newList;
 
-    return completeList;
+    // return CMPList;
 }
 
-cmpList printProceesCmpList(cmpList CMPList, bgList list) {
+cmpList printProceesCmpList() {
     cmpList temp = CMPList;
     while (temp!= NULL) {
         if(temp->processDetails->exit_status == Normal)
@@ -42,23 +42,6 @@ cmpList printProceesCmpList(cmpList CMPList, bgList list) {
             printf("%s exited abnormally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);
         temp = temp->next;
     }
-
-    // return NULL;
-
-    // bgList temp = list;
-    // while(temp != NULL){
-    //     printf("%p %d\n", temp, temp->processDetails->running_status);
-    //     if(temp->processDetails->running_status == Finished){
-    //         if(temp->processDetails->exit_status == Normal)
-    //             printf("%s exited normally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);
-    //         else 
-    //             printf("%s exited abnormally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);   
-
-    //         revomeProcessBgList(list, CMPList, temp->processDetails);
-    //     }
-
-    //     temp = temp->next;
-    // }
 
     return NULL;
 }

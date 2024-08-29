@@ -1,4 +1,4 @@
-#include "reveal.h"
+#include "main.h"
 
 int compare(const void *arg1, const void *arg2) {
     char **arr1 = *(char ***)arg1;
@@ -72,7 +72,7 @@ int ls_l_print(char** file) {
     return 1;
 }
 
-bool reveal (char *str, char *cwd, char *PrevWD, char *abs) {
+bool reveal (char *str) {
     if(str == NULL) return false;
 
     char *token;
@@ -83,7 +83,7 @@ bool reveal (char *str, char *cwd, char *PrevWD, char *abs) {
     token = strtok_r(NULL, " \t\n", &svPtr);
 
     if (token == NULL) {
-        revealHelper(".", has_a, has_l, cwd, abs); 
+        revealHelper(".", has_a, has_l); 
         helperDone = true;
     } else {
         while (token != NULL) {
@@ -94,7 +94,7 @@ bool reveal (char *str, char *cwd, char *PrevWD, char *abs) {
                         return false;
                     }
 
-                    revealHelper(PrevWD, has_a, has_l, cwd, abs);
+                    revealHelper(PrevWD, has_a, has_l);
                     helperDone = true;
                 } else {
                     for(int i = 1; i<strlen(token); i++) {
@@ -112,17 +112,17 @@ bool reveal (char *str, char *cwd, char *PrevWD, char *abs) {
                     }
                 }
             } else if (strcmp(token, "~") == 0) {
-                revealHelper(cwd, has_a, has_l, cwd, abs);
+                revealHelper(cwd, has_a, has_l);
                 helperDone = true;
             } else if (token[0] == '~') {
                 char *temp;
                 temp = malloc(5001 * sizeof(char));
                 strcpy(temp, cwd);
                 strcat(temp, token + 1);
-                revealHelper(temp, has_a, has_l, cwd, abs);
+                revealHelper(temp, has_a, has_l);
                 helperDone = true;
             } else {
-                revealHelper(token, has_a, has_l, cwd, abs);
+                revealHelper(token, has_a, has_l);
                 helperDone = true;
             }
 
@@ -130,7 +130,7 @@ bool reveal (char *str, char *cwd, char *PrevWD, char *abs) {
         }
 
         if(helperDone == false){
-            revealHelper(".", has_a, has_l, cwd, abs);
+            revealHelper(".", has_a, has_l);
             helperDone = true;
         }
     }
@@ -138,14 +138,14 @@ bool reveal (char *str, char *cwd, char *PrevWD, char *abs) {
     return true;
 }
 
-void revealHelper (char *dest, bool has_a, bool has_l, char *cwd, char *abs) {
+void revealHelper (char *dest, bool has_a, bool has_l) {
     if (strcmp(dest, "~") == 0){
         chdir(cwd);
     } else {
         chdir(dest);
     }
     DIR *dir = opendir(".");
-    chdir(abs);
+    chdir(abslutePath);
 
     struct dirent* Dirent;
     char **arr[1024];

@@ -1,6 +1,6 @@
-#include "hop.h"
+#include "main.h"
 
-bool hop(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir, bool *prevWDInsideWorkingDir) {
+bool hop(char *str) {
     if(str == NULL){
         return false;
     }
@@ -16,9 +16,9 @@ bool hop(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir,
         if(try == -1){
             return false;
         }
-        *abs = currentWorkingDirectory();
-        *insideWorkingDir = true;
-        printf("%s\n", *abs);
+        abslutePath = currentWorkingDirectory();
+        insideWorkingDirectory = true;
+        printf("%s\n", abslutePath);
     } else {
         while(token != NULL) {
             int try;
@@ -31,12 +31,12 @@ bool hop(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir,
                 strcat(temp, token + 1);
                 try = chdir(temp);
             }else if(strcmp(token, "-") == 0) {
-                if(prevWD[0] == '\0'){
+                if(PrevWD[0] == '\0'){
                     printf("Not Present Previous Directory\n");
                     token = strtok_r(NULL, " \t\n", &svPtr);
                     continue;
                 }
-                try = chdir(prevWD);
+                try = chdir(PrevWD);
             }
             else {
                 try = chdir(token);
@@ -45,17 +45,17 @@ bool hop(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir,
                 return false;
             }
 
-            strcpy(prevWD, *abs);
-            *prevWDInsideWorkingDir = *insideWorkingDir;
+            strcpy(PrevWD, abslutePath);
+            prevInsideWorkingDirectory = insideWorkingDirectory;
 
-            *abs = currentWorkingDirectory();
-            if(strncmp(*abs, cwd, strlen(cwd) - 1) == 0){
-                *insideWorkingDir = true;
+            abslutePath = currentWorkingDirectory();
+            if(strncmp(abslutePath, cwd, strlen(cwd) - 1) == 0){
+                insideWorkingDirectory = true;
             } else {
-                *insideWorkingDir = false;
+                insideWorkingDirectory = false;
             }
 
-            printf("%s\n", *abs);
+            printf("%s\n", abslutePath);
             token = strtok_r(NULL, " \t\n", &svPtr);
         }
     }
@@ -63,7 +63,7 @@ bool hop(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir,
     return true;
 }
 
-bool cd(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir, bool *prevWDInsideWorkingDir) {
+bool cd(char *str) {
     if(str == NULL){
         return false;
     }
@@ -79,8 +79,8 @@ bool cd(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir, 
         if(try == -1){
             return false;
         }
-        *abs = currentWorkingDirectory();
-        *insideWorkingDir = true;
+        abslutePath = currentWorkingDirectory();
+        insideWorkingDirectory = true;
     } else {
         char *token2 = strtok_r(NULL, " \t\n", &svPtr);
         if(token2 != NULL){
@@ -97,11 +97,11 @@ bool cd(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir, 
             strcat(temp, token + 1);
             try = chdir(temp);
         }else if(strcmp(token, "-") == 0) {
-            if(prevWD[0] == '\0'){
+            if(PrevWD[0] == '\0'){
                 printf("Not Present Previous Directory\n");
                 token = strtok_r(NULL, " \t\n", &svPtr);
             }
-            try = chdir(prevWD);
+            try = chdir(PrevWD);
         }
         else {
             try = chdir(token);
@@ -110,18 +110,18 @@ bool cd(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir, 
             return false;
         }
 
-        strcpy(prevWD, *abs);
-        *prevWDInsideWorkingDir = *insideWorkingDir;
+        strcpy(PrevWD, abslutePath);
+        prevInsideWorkingDirectory = insideWorkingDirectory;
 
-        *abs = currentWorkingDirectory();
-        if(strncmp(*abs, cwd, strlen(cwd) - 1) == 0){
-            *insideWorkingDir = true;
+        abslutePath = currentWorkingDirectory();
+        if(strncmp(abslutePath, cwd, strlen(cwd) - 1) == 0){
+            insideWorkingDirectory = true;
         } else {
-            *insideWorkingDir = false;
+            insideWorkingDirectory = false;
         }
 
         if(strcmp(token, "-") == 0)
-            printf("%s\n", *abs);
+            printf("%s\n", abslutePath);
     }
 
     return true;

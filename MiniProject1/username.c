@@ -1,4 +1,4 @@
-#include "username.h"   
+#include "main.h"   
 
 char *getSystemName(){
     char *sysName;
@@ -25,13 +25,13 @@ char *getHostName(){
 }
 
 char *currentWorkingDirectory(){
-    char *cwd;
-    cwd = malloc(sizeof(char) * 5001);
-    getcwd(cwd, 5001);
-    return cwd;
+    char *New;
+    New = malloc(sizeof(char) * 5001);
+    getcwd(New, 5001);
+    return New;
 }
 
-void displayRequirments(char *abs, char *cwd, bool insideWorkingDirectory){
+void displayRequirments(){
     char *sysName = getSystemName();
     char *hostName = getHostName();
     char *display;
@@ -51,9 +51,9 @@ void displayRequirments(char *abs, char *cwd, bool insideWorkingDirectory){
     if(insideWorkingDirectory == true){
         strcat(display, "~");
         int len  = strlen(cwd);
-        strcat(display, abs + len);
+        strcat(display, abslutePath + len);
     } else {
-        strcat(display, abs);
+        strcat(display, abslutePath);
     }
     strcat(display, ">");
     printf("%s", display);

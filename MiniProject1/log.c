@@ -1,4 +1,4 @@
-#include "log.h"
+#include "main.h"
 
 void removeNewline(char *str) {
     char *newlinePos = strchr(str, '\n');
@@ -7,25 +7,7 @@ void removeNewline(char *str) {
     }
 }
 
-int convertToNumber(char *str){
-    int x = 0;
-    int i = 0;
-    char c;
-    c = str[i];
-    i++;
-
-    while(c != '\0'){
-        c -= '0';
-        x *= 10;
-        x += c;
-        c = str[i];
-        i++;
-    }
-
-    return x;
-}
-
-bool saveToLog(char *str, int logFile) {
+bool saveToLog(char *str) {
     char History[MAX_HISTORY_SIZE + 1][5001];
     char OldHistory[(MAX_HISTORY_SIZE + 1) * 5001];
     int i = 0;
@@ -78,7 +60,7 @@ bool saveToLog(char *str, int logFile) {
     return true;
 }
 
-bool printHistory(int logFile) {
+bool printHistory() {
     char History[MAX_HISTORY_SIZE + 1][5001];
     char OldHistory[(MAX_HISTORY_SIZE + 1) * 5001];
     int i = 0;
@@ -112,13 +94,13 @@ bool printHistory(int logFile) {
     return true;
 }
 
-bool purgeHistory(int logFile) {
+bool purgeHistory() {
     ftruncate(logFile, 0);
     lseek(logFile, 0, SEEK_SET);
     return true;
 }
 
-bool executeHistory(int commandNumber, int logFile, char *abs, char *cwd, char *PrevWD, bool *insideWorkingDirectory, bool *prevInsideWorkingDirectory, bool *exitProgram, bgList BGList, cmpList CMPList) {
+bool executeHistory(int commandNumber) {
     char History[MAX_HISTORY_SIZE + 1][5001];
     char OldHistory[(MAX_HISTORY_SIZE + 1) * 5001];
     int i = 0;
@@ -145,13 +127,13 @@ bool executeHistory(int commandNumber, int logFile, char *abs, char *cwd, char *
 
     lseek(logFile, 0, SEEK_SET);
 
-    saveToLog(History[i - commandNumber], logFile);
+    saveToLog(History[i - commandNumber]);
     
-    process(History[i - commandNumber], &abs, cwd, PrevWD, insideWorkingDirectory, prevInsideWorkingDirectory, logFile, exitProgram, &BGList, CMPList);
+    process(History[i - commandNumber]);
     return true;
 }
 
-bool handleLog(char *str, int logFile, char * abs, char *cwd, char *PrevWD, bool *insideWorkingDirectory, bool *prevInsideWorkingDirectory, bool *exitProgram, bgList BGList, cmpList CMPList) {
+bool handleLog(char *str) {
     if(str == NULL) return false;
 
     char *cmd;
@@ -167,9 +149,8 @@ bool handleLog(char *str, int logFile, char * abs, char *cwd, char *PrevWD, bool
         purgeHistory(logFile);
     } else if(strcmp(token, "execute") == 0){
         token = strtok_r(NULL, " \t\n", &svPtr);    // gets the number
-        int commandNumber = convertToNumber(token);
-
-        executeHistory(commandNumber, logFile, abs, cwd, PrevWD, insideWorkingDirectory, prevInsideWorkingDirectory, exitProgram, BGList, CMPList);
+        int commandNumber = atoi(token);
+        executeHistory(commandNumber);
     } else {
         return false;
     }

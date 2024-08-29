@@ -1,15 +1,15 @@
-reveal -al ; ls -al 
-reveal -al /home; ls -al /home
-reveal -al / ; ls -al /
-reveal -al try; ls -al try
-exit
-cd ..
-cd 
-cd ..
-hop
-cd -
-cd ..
-cd -
-cd ..
 hop -
+exit
+sleep 2; ls
+sleep 3; ls
+exit
+cd try/try2
+ls _
+ls ~
+reveal ~
+reveal -al ~
+ls ~
+ls -
+cd -
+reveal ~
 exit
