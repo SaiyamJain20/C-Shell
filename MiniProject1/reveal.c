@@ -111,8 +111,15 @@ bool reveal (char *str, char *cwd, char *PrevWD, char *abs) {
                         }
                     }
                 }
-            } else if (token[0] == '~') {
+            } else if (strcmp(token, "~") == 0) {
                 revealHelper(cwd, has_a, has_l, cwd, abs);
+                helperDone = true;
+            } else if (token[0] == '~') {
+                char *temp;
+                temp = malloc(5001 * sizeof(char));
+                strcpy(temp, cwd);
+                strcat(temp, token + 1);
+                revealHelper(temp, has_a, has_l, cwd, abs);
                 helperDone = true;
             } else {
                 revealHelper(token, has_a, has_l, cwd, abs);
@@ -171,8 +178,10 @@ void revealHelper (char *dest, bool has_a, bool has_l, char *cwd, char *abs) {
                 return;
             }
 
-            cnt += per.st_nlink;
+            cnt += per.st_blocks;
         }
+
+        cnt /= 2;
 
         printf("total %lld\n", cnt);
 

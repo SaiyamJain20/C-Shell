@@ -34,7 +34,7 @@ void process(char *in, char **abs, char *cwd, char *PrevWD, bool *insideWorkingD
 
                     *BGList = backGroundProcessFunction(prev, *BGList, CMPList);
 
-                    printf("%p\n", *BGList);
+                    // printf("%p\n", *BGList);
                 }
                 prev = bk;
                 bk = strtok_r(NULL, "&", &svBk);
@@ -92,16 +92,41 @@ bool foreGroundProcessFunction(char *tkn, char **abs, char *cwd, char *PrevWD, b
         if(check == false){
             return false;
         }
+    } else if(strcmp(firstCommand, "proclore") == 0) {
+        bool check = proclore(tkn);
+        if(check == false){
+            return false;
+        }
+
     } else {
+        printf("%s\n", tkn);
         int fc = fork();
         if(fc < 0){
             perror("fork failed");
             exit(1);
         } else if(fc == 0){
-            if (execlp("/bin/sh", "sh", "-c", tkn, NULL) == -1) {
-                perror("Error executing command");
-                return false;
+            char *args[256]; 
+            memset(args, 0, sizeof(args));
+            int i = 0;
+
+            char *svPtr;
+            svPtr = malloc(sizeof(char) * (sizeof(tkn) + 10));
+            strcpy(svPtr, tkn);
+            args[i] = strtok_r(svPtr, " ", &svPtr);
+            while (args[i] != NULL) {
+                printf("%s ", args[i]);
+                i++;
+                args[i] = strtok_r(NULL, " ", &svPtr);
             }
+
+            printf("%s\n", args[0]);
+
+            if (execvp(args[0], args) == -1) {
+                perror("Error executing command");
+                exit(1);
+            }
+
+            exit(0);
         } else {
             wait(NULL);
         }
@@ -111,16 +136,14 @@ bool foreGroundProcessFunction(char *tkn, char **abs, char *cwd, char *PrevWD, b
 }
 
 bgList backGroundProcessFunction(char *tkn, bgList BGList, cmpList CMPList) {
-    backGroundProcess *process;
-    process = (backGroundProcess *)malloc(sizeof(backGroundProcess));
-    backGroundProcess **processPtr = &process;
-    strcpy(process->cmdName, tkn);
-    process->running_status = Running;
+    // backGroundProcess *process;
+    // process = (backGroundProcess *)malloc(sizeof(backGroundProcess));
+    // backGroundProcess **processPtr = &process;
+    // strcpy(process->cmdName, tkn);
+    // process->running_status = Running;
 
-    process->ptr = NULL;
-    BGList = addNewProcessBgList(BGList, process);
-
-    printf("%p\n", BGList);
+    // process->ptr = NULL;
+    // BGList = addNewProcessBgList(BGList, process);
 
     int fc = fork();
     if(fc < 0){
@@ -128,42 +151,53 @@ bgList backGroundProcessFunction(char *tkn, bgList BGList, cmpList CMPList) {
         exit(1);
     } else if(fc == 0){
         int pid = getpid();
-        process->pid = pid;
+        // process->pid = pid;
 
         int fc2 = fork();
         if(fc2 < 0){
             perror("fork failed");
             exit(1);
         } else if(fc2 == 0){
-            if (execlp("/bin/sh", "sh", "-c", tkn, NULL) == -1) {
-                (*processPtr)->running_status = Finished;
-                (*processPtr)->exit_status = Abnormal;
-                // CMPList = revomeProcessBgList(BGList, CMPList, process);
+            char *args[256]; 
+            memset(args, 0, sizeof(args));
+            int i = 0;
 
+            char *svPtr;
+            svPtr = malloc(sizeof(char) * (sizeof(tkn) + 10));
+            strcpy(svPtr, tkn);
+            args[i] = strtok_r(svPtr, " ", &svPtr);
+            while (args[i] != NULL) {
+                i++;
+                args[i] = strtok_r(NULL, " ", &svPtr);
+            }
+
+            if (execvp(args[0], args) == -1) {
                 perror("Error executing command");
                 exit(1);
             }
-        } else {
-            wait(NULL);
-            (*processPtr)->running_status = Finished;
-            (*processPtr)->exit_status = Normal;
 
-            // process->running_status = Finished;
-            // process->exit_status = Normal;
-            // CMPList = revomeProcessBgList(BGList, CMPList, process);
-            // if (CMPList == NULL) {
-                // printf("CMPList is still NULL after revomeProcessBgList.\n");
-            // } else {
-            //     printf("Process with PID %d moved to CMPList successfully.\n", process->pid);
-            // }
+            exit(0);
+        } else {
+            int exitStatus = wait(NULL);
+
+            if(exitStatus == 1){
+                printf("%sexited abnormally (%d)\n", tkn, pid);
+                // process->running_status = Finished;
+                // process->exit_status = Abnormal;
+                // CMPList = revomeProcessBgList(BGList, CMPList, process);
+            } else {
+                printf("%sexited normally (%d)\n", tkn, pid);
+                // process->running_status = Finished;
+                // process->exit_status = Normal;
+                // CMPList = revomeProcessBgList(BGList, CMPList, process);
+            }
+
             exit(0);
         }
     } else {
-        process->pid = fc;
+        // process->pid = fc;
         printf("%d\n", fc);
     }
-
-    printf("%p\n", BGList);
 
     return BGList;
 }

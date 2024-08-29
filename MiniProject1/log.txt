@@ -1,15 +1,15 @@
-sleep 1&sleep 2&echo "Hii" &hop ..
-hop .
+reveal -al ; ls -al 
+reveal -al /home; ls -al /home
+reveal -al / ; ls -al /
+reveal -al try; ls -al try
 exit
-sleep 1&sleep 2&echo "Hii" &hop ..
-hop .
-exit
-sleep 1&sleep 2&echo "Hii" &hop ..
-hop .
-exit
-sleep 1&sleep 2&echo "Hii" &hop ..
-hop .
-exit
-sleep 1&sleep 2&echo "Hii" &hop ..
-hop .
+cd ..
+cd 
+cd ..
+hop
+cd -
+cd ..
+cd -
+cd ..
+hop -
 exit

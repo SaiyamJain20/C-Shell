@@ -66,5 +66,6 @@ struct completedBackGroundProcessList {
 #include "log.h"
 #include "backGroundProcess.h"
 #include "process.h"
+#include "proclore.h"
 
 #endif

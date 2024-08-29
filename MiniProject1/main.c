@@ -32,7 +32,6 @@ int main(){
     while(1){
         displayRequirments(abs, cwd, insideWorkingDirectory); 
         fgets(in, 5001, stdin);
-        printf("%p\n", BGList);
         CMPList = printProceesCmpList(CMPList, BGList);
 
         char *logSavePtr = (char *)malloc(sizeof(char) * (strlen(in) + 10));

@@ -34,31 +34,31 @@ cmpList revomeProcessBgList(bgList list, cmpList completeList, backGroundProcess
 }
 
 cmpList printProceesCmpList(cmpList CMPList, bgList list) {
-    // cmpList temp = compareList;
-    // while (temp!= NULL) {
-    //     if(temp->processDetails->exit_status == Normal)
-    //         printf("%s exited normally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);
-    //     else 
-    //         printf("%s exited abnormally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);
-    //     temp = temp->next;
-    // }
+    cmpList temp = CMPList;
+    while (temp!= NULL) {
+        if(temp->processDetails->exit_status == Normal)
+            printf("%s exited normally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);
+        else 
+            printf("%s exited abnormally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);
+        temp = temp->next;
+    }
 
     // return NULL;
 
-    bgList temp = list;
-    while(temp != NULL){
-        printf("%p %d\n", temp, temp->processDetails->running_status);
-        if(temp->processDetails->running_status == Finished){
-            if(temp->processDetails->exit_status == Normal)
-                printf("%s exited normally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);
-            else 
-                printf("%s exited abnormally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);   
+    // bgList temp = list;
+    // while(temp != NULL){
+    //     printf("%p %d\n", temp, temp->processDetails->running_status);
+    //     if(temp->processDetails->running_status == Finished){
+    //         if(temp->processDetails->exit_status == Normal)
+    //             printf("%s exited normally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);
+    //         else 
+    //             printf("%s exited abnormally (%d)\n", temp->processDetails->cmdName, temp->processDetails->pid);   
 
-            revomeProcessBgList(list, CMPList, temp->processDetails);
-        }
+    //         revomeProcessBgList(list, CMPList, temp->processDetails);
+    //     }
 
-        temp = temp->next;
-    }
+    //     temp = temp->next;
+    // }
 
     return NULL;
 }

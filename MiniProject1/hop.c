@@ -26,6 +26,7 @@ bool hop(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir,
                 try = chdir(cwd);
             } else if (token[0] == '~') {
                 char *temp;
+                temp = malloc(5001 * sizeof(char));
                 strcpy(temp, cwd);
                 strcat(temp, token + 1);
                 try = chdir(temp);
@@ -91,6 +92,7 @@ bool cd(char *str, char **abs, char *cwd, char *prevWD, bool *insideWorkingDir, 
             try = chdir(cwd);
         } else if (token[0] == '~') {
             char *temp;
+            temp = malloc(5001 * sizeof(char));
             strcpy(temp, cwd);
             strcat(temp, token + 1);
             try = chdir(temp);
