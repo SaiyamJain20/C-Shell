@@ -3,6 +3,6 @@
 
 #include "globalVariable.h"
 
-bool proclore(char *tkn);
+void proclore(char *tkn);
 
 #endif

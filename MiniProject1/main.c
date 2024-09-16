@@ -1,66 +1,52 @@
 #include "main.h"
 
-char *abslutePath;
-char *cwd;
-char *PrevWD;
+char abslutePath[MAX_PATH_LENGTH];
+char cwd[MAX_PATH_LENGTH];
+char PrevWD[MAX_PATH_LENGTH];
 bool prevInsideWorkingDirectory;
 bool insideWorkingDirectory;
 int logFile;
 bool exitProgram;
-bgList BGList;
-cmpList CMPList;
-
+FILE *inputFile;
+FILE *outputFile;
+char extraTime[MAX_TIME_STR_LENGTH];;
+bool pipeLine;
+int pipefd[2];
+int bgPipefd[2];
+bool isLastCommandBG;
+backGroundProcess *bgList;
+int numberOfBackGroundProcess;
+int shellPID;
+int currentPID;
+volatile bool neonateCalled;
+struct termios original_termios;
+aliasList *aliaslist;
+funcList *funclist;
 
 int main(){
-    abslutePath = malloc(sizeof(char) * 5001);
-    abslutePath = currentWorkingDirectory();
-
-    cwd = malloc(sizeof(char) * 5001);
-    cwd = currentWorkingDirectory();
-
-    PrevWD = malloc(sizeof(char) * 5001);
-    PrevWD[0] = '\0';
-
-    prevInsideWorkingDirectory = true;
-    insideWorkingDirectory = true;
-
+    bootShell();
     char *in;
-    in = malloc(sizeof(char) * 5001);
+    in = malloc(sizeof(char) * MAX_INPUT_LENGTH);
 
-    logFile = open("log.txt", O_RDWR | O_CREAT, 0644);
-    if (logFile < 0) {
-        perror("Error opening history file");
-        return 1;
-    }
-    
-    exitProgram = false;
-    BGList = NULL;
-    CMPList = NULL;
+    signal(SIGTSTP, handleCtrlZ);
+    signal(SIGINT, handleCtrlC);
 
     while(1){
-        displayRequirments(); 
-        fgets(in, 5001, stdin);
-        CMPList = printProceesCmpList();
-
-        char *logSavePtr = (char *)malloc(sizeof(char) * (strlen(in) + 10));
-        bool containsLog = false;
-        strcpy(logSavePtr, in);
-        char *temp;
-        temp = strtok_r(logSavePtr, " \t\n;&", &logSavePtr);
-        
-        while(temp != NULL){
-            if(strcmp(temp, "log") == 0){
-                containsLog = true;
-                break;
-            }
-            temp = strtok_r(NULL, " \t\n;&", &logSavePtr);
+        printCompletedBgProcesses();
+        displayRequirments();
+        memset(extraTime, 0, sizeof(char) * MAX_TIME_STR_LENGTH);
+        memset(in, 0, sizeof(char) * MAX_INPUT_LENGTH);
+        if(fgets(in, MAX_INPUT_LENGTH, inputFile) == NULL) {
+            handleCtrlD();
+            continue;
         }
 
-        if(containsLog == false) {
-            bool savedToLOG = saveToLog(in);
-            if(!saveToLog){
-                perror("saveToLog");
-            }
+        if(in[0] == '\n') {
+            continue;
+        }
+
+        if(containsLog(in)) {
+            saveToLog(in);
         }
 
         process(in);
@@ -69,7 +55,8 @@ int main(){
         }
     }
 
-    close(logFile);
+    free(in);
+    freeShell();
 
     return 0;
 }

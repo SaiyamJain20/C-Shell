@@ -1,24 +1,43 @@
 #include "main.h"
 
-bool hop(char *str) {
+void hop(char *str) {
     if(str == NULL){
-        return false;
+        return;
     }
 
     char *token;
     char *svPtr = str;
-    token = strtok_r(svPtr, " \t\n", &svPtr);   // 1st command is hop
+    token = strtok_r(svPtr, " \t\n", &svPtr);   
+
+    while(token != NULL && (token[0] == '<' || token[0] == '>')) {
+        trim_spaces(token);
+        token = strtok_r(NULL, " \t\n", &svPtr);
+        if(token == NULL) {
+            perror("Invalid IO Redirection");
+            return;
+        } 
+
+        token = strtok_r(NULL, " \t\n", &svPtr);
+    }
+
+    if(token == NULL) {
+        perror("Invalid Command");
+        return;
+    }
+
     token = strtok_r(NULL, " \t\n", &svPtr);
 
     if(token == NULL){
         int try;
         try = chdir(cwd);
         if(try == -1){
-            return false;
+            perror("Failed to change directory\n");
+            return;
         }
-        abslutePath = currentWorkingDirectory();
+        strcpy(abslutePath, currentWorkingDirectory());
         insideWorkingDirectory = true;
-        printf("%s\n", abslutePath);
+        fprintf(outputFile, YELLOW BOLD "%s" RESET, abslutePath);
+        fprintf(outputFile, "\n");
     } else {
         while(token != NULL) {
             int try;
@@ -26,13 +45,13 @@ bool hop(char *str) {
                 try = chdir(cwd);
             } else if (token[0] == '~') {
                 char *temp;
-                temp = malloc(5001 * sizeof(char));
+                temp = malloc(MAX_PATH_LENGTH * sizeof(char));
                 strcpy(temp, cwd);
                 strcat(temp, token + 1);
                 try = chdir(temp);
             }else if(strcmp(token, "-") == 0) {
                 if(PrevWD[0] == '\0'){
-                    printf("Not Present Previous Directory\n");
+                    perror("Failed to change directory\n");
                     token = strtok_r(NULL, " \t\n", &svPtr);
                     continue;
                 }
@@ -42,49 +61,75 @@ bool hop(char *str) {
                 try = chdir(token);
             }
             if(try == -1){
-                return false;
+                perror("Failed to change directory\n");
+                return;
             }
 
             strcpy(PrevWD, abslutePath);
             prevInsideWorkingDirectory = insideWorkingDirectory;
 
-            abslutePath = currentWorkingDirectory();
+            strcpy(abslutePath, currentWorkingDirectory());
             if(strncmp(abslutePath, cwd, strlen(cwd) - 1) == 0){
                 insideWorkingDirectory = true;
             } else {
                 insideWorkingDirectory = false;
             }
 
-            printf("%s\n", abslutePath);
+            fprintf(outputFile, YELLOW BOLD "%s" RESET, abslutePath);
+            fprintf(outputFile, "\n");
             token = strtok_r(NULL, " \t\n", &svPtr);
+            if(token != NULL && (token[0] == '<' || token[0] == '>')){
+                return;
+            }
         }
     }
 
-    return true;
+    return;
 }
 
-bool cd(char *str) {
+void cd(char *str) {
     if(str == NULL){
-        return false;
+        return;
     }
 
     char *token;
     char *svPtr = str;
-    token = strtok_r(svPtr, " \t\n", &svPtr);   // 1st command is hop
+    token = strtok_r(svPtr, " \t\n", &svPtr);  
+
+    while(token != NULL && (token[0] == '<' || token[0] == '>')) {
+        trim_spaces(token);
+        token = strtok_r(NULL, " \t\n", &svPtr);
+        if(token == NULL) {
+            perror("Invalid IO Redirection");
+            return;
+        } 
+
+        token = strtok_r(NULL, " \t\n", &svPtr);
+    }
+
+    if(token == NULL) {
+        perror("Invalid Command");
+        return;
+    }
+
     token = strtok_r(NULL, " \t\n", &svPtr);
 
     if(token == NULL){
         int try;
         try = chdir(cwd);
         if(try == -1){
-            return false;
+            perror("Failed to change directory\n");
+            return;
         }
-        abslutePath = currentWorkingDirectory();
+        strcpy(abslutePath, currentWorkingDirectory());
         insideWorkingDirectory = true;
     } else {
         char *token2 = strtok_r(NULL, " \t\n", &svPtr);
         if(token2 != NULL){
-            return false;
+            trim_spaces(token2);
+            if((token2[0] != '<' && token2[0] != '>' && token2[0] != '|')){
+                return;
+            }
         }
 
         int try;
@@ -92,14 +137,14 @@ bool cd(char *str) {
             try = chdir(cwd);
         } else if (token[0] == '~') {
             char *temp;
-            temp = malloc(5001 * sizeof(char));
+            temp = malloc(MAX_PATH_LENGTH * sizeof(char));
             strcpy(temp, cwd);
             strcat(temp, token + 1);
             try = chdir(temp);
-        }else if(strcmp(token, "-") == 0) {
+        } else if(strcmp(token, "-") == 0) {
             if(PrevWD[0] == '\0'){
-                printf("Not Present Previous Directory\n");
-                token = strtok_r(NULL, " \t\n", &svPtr);
+                perror("Failed to change directory\n");
+                return;
             }
             try = chdir(PrevWD);
         }
@@ -107,22 +152,25 @@ bool cd(char *str) {
             try = chdir(token);
         }
         if(try == -1){
-            return false;
+            perror("Failed to change directory\n");
+            return;
         }
 
         strcpy(PrevWD, abslutePath);
         prevInsideWorkingDirectory = insideWorkingDirectory;
 
-        abslutePath = currentWorkingDirectory();
+        strcpy(abslutePath, currentWorkingDirectory());
         if(strncmp(abslutePath, cwd, strlen(cwd) - 1) == 0){
             insideWorkingDirectory = true;
         } else {
             insideWorkingDirectory = false;
         }
 
-        if(strcmp(token, "-") == 0)
-            printf("%s\n", abslutePath);
+        if(strcmp(token, "-") == 0){
+            fprintf(outputFile, MAGENTA BOLD "%s" RESET, abslutePath);
+            fprintf(outputFile, "\n");
+        }
     }
 
-    return true;
+    return;
 }

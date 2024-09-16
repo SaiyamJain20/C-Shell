@@ -3,7 +3,7 @@
 
 #include "globalVariable.h"
 
-bool hop(char *str);
-bool cd(char *str);
+void hop(char *str);
+void cd(char *str);
 
 #endif

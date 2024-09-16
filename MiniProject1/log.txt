@@ -1,15 +1,15 @@
-hop -
-exit
-sleep 2; ls
-sleep 3; ls
-exit
-cd try/try2
-ls _
-ls ~
-reveal ~
-reveal -al ~
-ls ~
-ls -
 cd -
-reveal ~
-exit
+e
+cd ..
+e
+cd ..
+cd -
+ce
+try
+try > out
+ce
+sleep 1 & sleep 2 &
+cd
+proclore | wc &
+proclore | wc
+e

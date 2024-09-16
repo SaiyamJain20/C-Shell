@@ -4,7 +4,8 @@
 #include "globalVariable.h"
 
 void process(char *in);
-bool foreGroundProcessFunction(char *tkn);
-bgList backGroundProcessFunction(char *tkn);
+void foreGroundProcessFunction(char *tkn);
+void backGroundProcessFunction(char *tkn);
+int handleFork(char *args[256]);
 
 #endif

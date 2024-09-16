@@ -4,10 +4,11 @@
 #include "globalVariable.h"
 #define MAX_HISTORY_SIZE 15
 
-bool saveToLog(char *str);
-bool printHistory();
-bool purgeHistory();
-bool executeHistory(int commandNumber);
-bool handleLog(char *str); 
+void saveToLog(char *str);
+void printHistory();
+void purgeHistory();
+void executeHistory(int commandNumber);
+void handleLog(char *str); 
+bool containsLog(char *in);
 
 #endif

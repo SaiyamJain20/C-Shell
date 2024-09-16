@@ -24,74 +24,101 @@ char file_type(mode_t mode) {
 int ls_print(char** file) {
     struct stat per;
     if(stat(file[1],&per)!=0){
-        perror("Error: ");
+        perror("Stat erreo\n");
         return 0;
     }
 
-    if(per.st_mode & S_IXUSR) printf("\033[0;32m");
-    if (S_ISDIR(per.st_mode)) printf("\033[0;34m"); // Blue color for directory
+    if(per.st_mode & S_IXUSR) fprintf(outputFile, GREEN);
+    if (S_ISDIR(per.st_mode)) fprintf(outputFile, BLUE);
 
-    printf("%s\n",file[0]);
-    printf("\033[0m");
+    fprintf(outputFile, "%s" WHITE,file[0]);
+    fprintf(outputFile, "\n");
     return 1;
 }
 
 int ls_l_print(char** file) {
     struct stat per;
     if(stat(file[1],&per)!=0){
-        perror("Error: ");
+        perror("Stat erreo\n");
         return 0;
     }
 
-    printf("%c",file_type(per.st_mode));
+    fprintf(outputFile, "%c",file_type(per.st_mode));
+    fprintf(outputFile,  (per.st_mode & S_IRUSR) ? "r" : "-");
+    fprintf(outputFile,  (per.st_mode & S_IWUSR) ? "w" : "-");
+    fprintf(outputFile,  (per.st_mode & S_IXUSR) ? "x" : "-");
+    fprintf(outputFile,  (per.st_mode & S_IRGRP) ? "r" : "-");
+    fprintf(outputFile,  (per.st_mode & S_IWGRP) ? "w" : "-");
+    fprintf(outputFile,  (per.st_mode & S_IXGRP) ? "x" : "-");
+    fprintf(outputFile,  (per.st_mode & S_IROTH) ? "r" : "-");
+    fprintf(outputFile,  (per.st_mode & S_IWOTH) ? "w" : "-");
+    fprintf(outputFile,  (per.st_mode & S_IXOTH) ? "x" : "-");
+    fprintf(outputFile, " ");
+    fprintf(outputFile, "%5ld ",per.st_nlink);
+    fprintf(outputFile, "%s ", getpwuid(per.st_uid)->pw_name);
+    fprintf(outputFile, "%s ", getgrgid(per.st_gid)->gr_name);
+    fprintf(outputFile, "\t%8ld\t ", per.st_size);
     char date[100];
-    printf( (per.st_mode & S_IRUSR) ? "r" : "-");
-    printf( (per.st_mode & S_IWUSR) ? "w" : "-");
-    printf( (per.st_mode & S_IXUSR) ? "x" : "-");
-    printf( (per.st_mode & S_IRGRP) ? "r" : "-");
-    printf( (per.st_mode & S_IWGRP) ? "w" : "-");
-    printf( (per.st_mode & S_IXGRP) ? "x" : "-");
-    printf( (per.st_mode & S_IROTH) ? "r" : "-");
-    printf( (per.st_mode & S_IWOTH) ? "w" : "-");
-    printf( (per.st_mode & S_IXOTH) ? "x" : "-");
-    printf(" ");
-    printf("%5ld ",per.st_nlink);
-    printf("%s ", getpwuid(per.st_uid)->pw_name);
-    printf("%s ", getgrgid(per.st_gid)->gr_name);
-    printf("\t%8ld\t ", per.st_size);
     if (time(0) - per.st_mtime < 15780000)
-        strftime(date, 20, "%d %b %H:%M", localtime(&(per.st_mtime)));
+        strftime(date, 20, "%b %d %H:%M", localtime(&(per.st_mtime)));
     else
-        strftime(date, 20, "%d %b  %Y", localtime(&(per.st_mtime)));
-    printf("%s ",date);
-    if(per.st_mode & S_IXUSR) printf("\033[0;32m");
-    if (S_ISDIR(per.st_mode)) printf("\033[0;34m"); // Blue color for directory
+        strftime(date, 20, "%b %d  %Y", localtime(&(per.st_mtime)));
+    fprintf(outputFile, "%s ",date);
+    
+    if(per.st_mode & S_IXUSR) fprintf(outputFile, GREEN);
+    if (S_ISDIR(per.st_mode)) fprintf(outputFile, BLUE);
 
-    printf("%s\n",file[0]);
-    printf("\033[0m");
+    fprintf(outputFile, "%s" WHITE,file[0]);
+    fprintf(outputFile, "\n");
     return 1;
 }
 
-bool reveal (char *str) {
-    if(str == NULL) return false;
+void reveal (char *str) {
+    if(str == NULL) return;
 
     char *token;
     char *svPtr = str;
     bool helperDone = false;
     bool has_a = false, has_l = false;
     token = strtok_r(svPtr, " \t\n", &svPtr);   // 1st command is reveal
-    token = strtok_r(NULL, " \t\n", &svPtr);
+
+    while(token != NULL && (token[0] == '<' || token[0] == '>')) {
+        trim_spaces(token);
+        token = strtok_r(NULL, " \t\n", &svPtr);
+        if(token == NULL) {
+            perror("Invalid IO Redirection");
+            return;
+        } 
+
+        token = strtok_r(NULL, " \t\n", &svPtr);
+    }
+
+    token = strtok_r(svPtr, " \t\n", &svPtr); 
 
     if (token == NULL) {
         revealHelper(".", has_a, has_l); 
         helperDone = true;
     } else {
-        while (token != NULL) {
-            if(token[0] == '-'){
+        while (helperDone != true && token != NULL) {
+            trim_spaces(token);
+            while(token != NULL && (token[0] == '<' || token[0] == '>')) {
+                trim_spaces(token);
+                token = strtok_r(NULL, " \t\n", &svPtr);
+                if(token == NULL) {
+                    perror("Invalid IO Redirection");
+                    return;
+                } 
+
+                token = strtok_r(NULL, " \t\n", &svPtr);
+            }
+            if (token == NULL) {
+                revealHelper(".", has_a, has_l); 
+                helperDone = true;
+            } else if(token[0] == '-'){
                 if(token[1] == '\0'){
-                    if (PrevWD == NULL){
-                        printf("Not Present Previous Dictionary");
-                        return false;
+                    if (PrevWD[0] == '\0'){
+                        perror("Not Present Previous Dictionary\n");
+                        return;
                     }
 
                     revealHelper(PrevWD, has_a, has_l);
@@ -103,11 +130,8 @@ bool reveal (char *str) {
                         } else if(token[i] == 'l'){
                             has_l = true;
                         } else {
-                            printf("Invalid flags");
-                            return false;
-                        }
-                        if(has_a == true && has_l == true){
-                            break;
+                            perror("Invalid flags\n");
+                            return;
                         }
                     }
                 }
@@ -116,11 +140,12 @@ bool reveal (char *str) {
                 helperDone = true;
             } else if (token[0] == '~') {
                 char *temp;
-                temp = malloc(5001 * sizeof(char));
+                temp = malloc(MAX_PATH_LENGTH * sizeof(char));
                 strcpy(temp, cwd);
                 strcat(temp, token + 1);
                 revealHelper(temp, has_a, has_l);
                 helperDone = true;
+                free(temp);
             } else {
                 revealHelper(token, has_a, has_l);
                 helperDone = true;
@@ -135,7 +160,7 @@ bool reveal (char *str) {
         }
     }
 
-    return true;
+    return;
 }
 
 void revealHelper (char *dest, bool has_a, bool has_l) {
@@ -148,21 +173,22 @@ void revealHelper (char *dest, bool has_a, bool has_l) {
     chdir(abslutePath);
 
     struct dirent* Dirent;
-    char **arr[1024];
-    for(int i = 0; i<1024; i++) {
+    char **arr[MAX_FILES];
+    for(int i = 0; i<MAX_FILES; i++) {
         arr[i] = malloc(2 * sizeof(char *));
     }
-    int i = 0;
+    int i = 0, j = 0;
 
     while((Dirent = readdir(dir)) != NULL) {
         if(has_a || Dirent->d_name[0] != '.'){
-            arr[i][0] = malloc(100 * sizeof(char));
-            arr[i][1] = malloc(100 * sizeof(char));
+            arr[i][0] = malloc(MAX_PATH_LENGTH);
+            arr[i][1] = malloc(MAX_PATH_LENGTH);
             strcpy(arr[i][0], Dirent->d_name);
             strcpy(arr[i][1], dest);
             strcat(arr[i][1], "/");
             strcat(arr[i][1], Dirent->d_name);
             i++;
+            j++;
         }
     }
 
@@ -174,7 +200,7 @@ void revealHelper (char *dest, bool has_a, bool has_l) {
         for (int j = 0; j < i; ++j){
             struct stat per;
             if(stat(arr[j][1],&per)!=0){
-                perror("Error: ");
+                perror("Stat erreo\n");
                 return;
             }
 
@@ -183,7 +209,8 @@ void revealHelper (char *dest, bool has_a, bool has_l) {
 
         cnt /= 2;
 
-        printf("total %lld\n", cnt);
+        fprintf(outputFile, BLUE BOLD "total %lld" RESET, cnt);
+        fprintf(outputFile, "\n");
 
         for (int j = 0; j < i; ++j){
             ls_l_print(arr[j]);
@@ -195,5 +222,12 @@ void revealHelper (char *dest, bool has_a, bool has_l) {
     }
 
     closedir(dir);
+    for(int i = 0; i<MAX_FILES; i++) {
+        if(i < j){
+            free(arr[i][0]);
+            free(arr[i][1]);
+        }
+        free(arr[i]);
+    }
     return;
 }

@@ -7,8 +7,11 @@ char *getSystemName(){
 
     if(x != -1){
         int l = strlen(Uname.nodename) + 10;
-        sysName = malloc(sizeof(char) * l);
-
+        sysName = malloc(MAX_DISPLAY_LENGTH);
+        if(sysName == NULL) {
+            perror("malloc");
+            exit(0);
+        }
         strcpy(sysName, Uname.nodename);
         return sysName;
     } else {
@@ -18,31 +21,39 @@ char *getSystemName(){
 
 char *getHostName(){
     char *hostbuffer;
-    hostbuffer = malloc(sizeof(char) * 257);
-    
+    hostbuffer = malloc(MAX_DISPLAY_LENGTH);
+    if(hostbuffer == NULL) {
+        perror("malloc");
+        exit(0);
+    }
     hostbuffer = getlogin();
     return hostbuffer;
 }
 
 char *currentWorkingDirectory(){
     char *New;
-    New = malloc(sizeof(char) * 5001);
-    getcwd(New, 5001);
+    New = malloc(sizeof(char) * MAX_DISPLAY_LENGTH);
+    if(New == NULL) {
+        perror("malloc");
+        exit(0);
+    }
+    getcwd(New, MAX_PATH_LENGTH);
     return New;
 }
 
 void displayRequirments(){
+    fflush(stdout);
     char *sysName = getSystemName();
     char *hostName = getHostName();
     char *display;
-    display = malloc(sizeof(char) * 5001);
-    memset(display, 0, sizeof(char) * 5001);
+    display = malloc(sizeof(char) * MAX_DISPLAY_LENGTH);
+    if(display == NULL) {
+        perror("malloc");
+        return;
+    }
+    memset(display, 0, sizeof(char) * MAX_DISPLAY_LENGTH);
 
-    display[0] = '<';
-    strcat(display, hostName);  
-    strcat(display, "@");
-    strcat(display, sysName);
-    strcat(display, ":");
+    fprintf(outputFile, WHITE "<" GREEN BOLD"%s@%s" RESET WHITE ":", hostName, sysName);
 
     /*
         Everything will be added here
@@ -55,8 +66,16 @@ void displayRequirments(){
     } else {
         strcat(display, abslutePath);
     }
-    strcat(display, ">");
-    printf("%s", display);
+    
+    fprintf(outputFile, BLUE BOLD "%s", display);
+
+    if(extraTime[0] != '\0'){
+        fprintf(outputFile, MAGENTA BOLD " %s", extraTime);
+    }
+
+    fprintf(outputFile, RESET WHITE "> ");
+
+    free(display);
 
     return;
 }

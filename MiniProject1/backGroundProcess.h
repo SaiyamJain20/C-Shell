@@ -3,8 +3,9 @@
 
 #include "globalVariable.h"
 
-bgList addNewProcessBgList(backGroundProcess *process);
-cmpList revomeProcessBgList(backGroundProcess *process);
-cmpList printProceesCmpList();
+void addNewBgProcess(backGroundProcess *process);
+void deleteBackGroundProcess(int idx);
+void killAllBackGroundProcess();
+void printCompletedBgProcesses();
 
 #endif
