@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 struct tm *startTime;
 time_t startTimetm;

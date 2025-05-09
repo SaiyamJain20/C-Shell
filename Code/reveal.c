@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 int compare(const void *arg1, const void *arg2) {
     char **arr1 = *(char ***)arg1;

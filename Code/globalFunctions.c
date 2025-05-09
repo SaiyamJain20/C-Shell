@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 void bootShell() {
     strcpy(abslutePath, currentWorkingDirectory());
@@ -10,7 +10,7 @@ void bootShell() {
     inputFile = stdin;
     outputFile = stdout;
 
-    logFile = open("log.txt", O_RDWR | O_CREAT, 0644);
+    logFile = open("../log.txt", O_RDWR | O_CREAT, 0644);
     if (logFile < 0) {
         perror("Error opening history file\n");
         perror("CRASHING\n");

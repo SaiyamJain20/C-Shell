@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 void changeInputFile(char *inputFileName) {
     inputFile = freopen(inputFileName, "r", stdin);

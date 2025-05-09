@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 void fetch_man_page(char *cmd) {
     char *temp;

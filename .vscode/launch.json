@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/saiyamjain/Desktop/OS/MiniProjects/MiniProject1",
-      "program": "/home/saiyamjain/Desktop/OS/MiniProjects/MiniProject1/build/Debug/outDebug",
+      "cwd": "/home/saiyamjain/Desktop/Github/C-Shell/MiniProject1",
+      "program": "/home/saiyamjain/Desktop/Github/C-Shell/MiniProject1/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

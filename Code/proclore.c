@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 void proclore(char *tkn) {
     if(tkn == NULL) return;

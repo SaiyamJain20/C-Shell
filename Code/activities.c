@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 int compareByPid(const void *a, const void *b) {
     const backGroundProcess *processA = (const backGroundProcess *)a;

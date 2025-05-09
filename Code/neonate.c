@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 int get_most_recent_pid() {
     FILE *fd = fopen("/proc/loadavg", "r");

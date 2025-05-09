@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 void fg(char *tkn) {
     char *temp;

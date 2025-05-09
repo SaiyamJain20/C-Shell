@@ -1,5 +1,3 @@
-cd -
-e
 cd ..
 e
 cd ..
@@ -13,3 +11,5 @@ cd
 proclore | wc &
 proclore | wc
 e
+./main
+quit

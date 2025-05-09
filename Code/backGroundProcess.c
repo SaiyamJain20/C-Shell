@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 void addNewBgProcess(backGroundProcess *process){
     bgList[numberOfBackGroundProcess].pid = process->pid;
